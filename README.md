@@ -11,9 +11,9 @@ It exposes a single function :
 
 `show(path, zone, page_num=0)`
 
-where _path_ is the relative or absolute URL of the presentation, and _zone_
+where _path_ is the relative or absolute URL of the presentation, _zone_
 is a reference of the DOM element (usually a DIV) where the presentation is
-inserted
+inserted, and _page\_num_ is the page where the presentation starts.
 
 The presentation itself is a text file, supporting the following syntax
 elements :
@@ -26,10 +26,10 @@ This information must be on the first lines of the presentation
 Their syntax is : `@key value` where _key_ can currently take the following
 values :
 
-- title : the title of the presentation. If provided, the matching _value_
+- `title` : the title of the presentation. If provided, the matching _value_
 will be printed at the bottom of each slide
 
-- pagenum : if provided, the current page number and the total number of
+- `pagenum` : if provided, the current page number and the total number of
 pages in the presentation will be printed at the bottom of each page
 
 2. Directives inside a slide
