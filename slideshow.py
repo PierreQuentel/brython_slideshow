@@ -67,6 +67,8 @@ class Slideshow:
                 lines = []
             elif line.startswith('@pause'):
                 self.pages.append('\n'.join(lines))
+            elif line.startswith('@index'):
+                self.contents.append([line.split(' ',1)[1], len(self.pages)])
             else:
                 lines.append(line)
 
@@ -96,6 +98,7 @@ def show_page(slideshow, zone, page_num):
             toc <= html.OPTION(content[0], value=content[1],
                 selected=page_num>=content[1])
 
+    slideshow.page_num = int(page_num)
     zone.clear()
             
     body = html.DIV()
