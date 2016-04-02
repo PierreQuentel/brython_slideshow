@@ -23,11 +23,11 @@ def keydown(ev, slideshow, zone):
     ev.preventDefault()  
 
 def move_to(ev, slideshow, zone):
-    pc = (ev.x-ev.target.left)/ev.target.width
+    pc = (ev.x-ev.target.abs_left)/ev.target.width
     nb_pages = len(slideshow.pages)-1
     page = round(nb_pages*pc)
     slideshow.page_num = page
-    new_pos = '%spx' %(ev.x-ev.target.left-(document['tl_pos'].width/2))
+    new_pos = '%spx' %(ev.x-ev.target.abs_left-(document['tl_pos'].width/2))
     # show page at specified position
     show_page(slideshow, zone, page)
     # set new cursor position
@@ -88,6 +88,9 @@ def show(path, zone, page_num=0):
 
     show_page(slideshow, zone, page_num)
 
+def run_code(ev):
+    print(ev.target.text)
+    
 def show_page(slideshow, zone, page_num):
     # if table of contents is not empty, add it
     if slideshow.contents:
@@ -103,7 +106,7 @@ def show_page(slideshow, zone, page_num):
             
     body = html.DIV()
     body.html = markdown.mark(slideshow.pages[page_num])[0]
-
+    
     if slideshow.contents:
         body = html.DIV(toc+body)
 
@@ -121,9 +124,11 @@ def show_page(slideshow, zone, page_num):
     zone <= body+footer+timeline
     tl_pos.style.left = '%spx' %(timeline.width*page_num/len(slideshow.pages))
     
-    for elt in zone.get(selector='.python'):
+    for elt in zone.get(selector='.python')+zone.get(selector='.marked'):
         src = elt.text.strip()
         width = max(len(line) for line in src.split('\n'))
+        width = max(width, 30)
         # replace element content by highlighted code
         elt.html = highlight.highlight(src).html
         elt.style.width = '%sem' %int(0.7*width)
+        elt.bind('click', run_code)
