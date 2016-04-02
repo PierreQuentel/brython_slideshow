@@ -1,9 +1,8 @@
-
 from browser import document, markdown, html
 import highlight
 
 def _keydown(ev, path, zone, page):
-    if ev.keyCode in [39,40]: # key right or down : next page
+    if ev.keyCode in [32,39,40]: # key space, right or down : next page
         show(path, zone, page+1)
         ev.preventDefault()    
     elif ev.keyCode in [37,38]: #key left or up: previous page
@@ -11,7 +10,7 @@ def _keydown(ev, path, zone, page):
         ev.preventDefault()
 
 def keydown(ev, slideshow, zone):
-    if ev.keyCode in [39,40]: # key right or down : next page
+    if ev.keyCode in [32,39,40]: # key space, right or down : next page
         slideshow.page_num += 1
         if slideshow.page_num >= len(slideshow.pages):
             slideshow.page_num = 0
