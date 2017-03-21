@@ -1,4 +1,5 @@
 from browser import document, markdown, html
+import time
 import highlight
 
 def _keydown(ev, path, zone, page):
@@ -39,7 +40,7 @@ def click_on_tl_pos(ev):
 class Slideshow:
 
     def __init__(self, path):
-        self.src = src = open(path).read()
+        self.src = src = open(path+'?foo=%s' %time.time()).read()
         self.title = ''
         self.show_page_num = False
         
