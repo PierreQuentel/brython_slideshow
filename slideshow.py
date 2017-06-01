@@ -2,6 +2,19 @@ from browser import document, html, window
 import markdown
 import highlight
 
+def escape(html):
+    html = html.replace('<', '&lt;')
+    html = html.replace('>', '&gt;')
+    return html
+       
+def _keydown(ev, path, zone, page):
+    if ev.keyCode in [39, 40]: # key right or down : next page
+        show(path, zone, page + 1)
+        ev.preventDefault()    
+    elif ev.keyCode in [37, 38]: #key left or up: previous page
+        show(path, zone, page - 1)
+        ev.preventDefault()
+
 def keydown(ev, slideshow, zone):
     if ev.keyCode in [39, 40]: # key right or down : next page
         slideshow.page_num += 1
@@ -116,27 +129,33 @@ def show_page(slideshow, zone, page_num):
     
     body = html.DIV()
     body.html = markdown.mark(slideshow.pages[page_num])[0]
+
+    wh = window.innerHeight
+    fontSize = int(18 * window.innerHeight / 800)
+    body.style.fontSize = "{}px".format(fontSize)
     
     if slideshow.contents:
         body = html.DIV(toc + body)
 
     footer = html.DIV(Id="footer")
+    footer.style.fontSize = "{}px".format(fontSize)
     if slideshow.title:
         footer <= html.DIV(slideshow.title,style=dict(display='inline'))
     if slideshow.show_page_num:
         footer <= html.SPAN(' (%s/%s)' %(page_num+1, len(slideshow.pages)),
             style=dict(display='inline'))
     timeline = html.DIV(Id='timeline')
+    timeline.style.height = "{}px".format(int(fontSize/2))
     tl_pos = html.DIV(Id='tl_pos')
     timeline <= tl_pos
     timeline.bind('click', lambda ev:move_to(ev, slideshow, zone))
     tl_pos.bind('click', click_on_tl_pos)
-    zone <= body + footer +timeline
+
+    zone <= body + footer + timeline
+
     wh = window.innerHeight
-    footer.style.top = "{}px".format(int(wh * 0.9))
-    timeline.style.top = "{}px".format(int(wh * 0.85))
     tl_pos.style.left = '%spx' %(timeline.width*page_num/len(slideshow.pages))
-    document["cours"].style.minHeight = "{}px".format(int(wh * 0.8))
+    document["cours"].style.minHeight = "{}px".format(int(wh * 0.9))
     
     for elt in zone.get(selector='.python'):
         src = elt.text.strip()
@@ -167,6 +186,8 @@ def show_page(slideshow, zone, page_num):
                         for (start, line) in zip(py_starts, colored_lines))
                     py = ''
                     py_starts = []
+                else:
+                    line = escape(line)
                 result += '\n' + line
         if py:
             colored = highlight.highlight(py).html
